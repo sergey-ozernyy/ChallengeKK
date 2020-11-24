@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ChallengeKK</string>
+    <string name="clear">Clear</string>
+    <string name="send">Send</string>
+    <string name="event1">Event 1</string>
+    <string name="event2">Event 2</string>
+    <string name="event3">Event 3</string>
+    <string name="event4">Event 4</string>
+    <string name="event5">Event 5</string>
+    <string name="events">События</string>
+
+</resources>
