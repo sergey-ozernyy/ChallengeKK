@@ -2,12 +2,15 @@ package com.example.challengekk;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,11 +49,15 @@ public class MainActivity extends AppCompatActivity {
                 currentForm.setContent(contentEditText.getText().toString());
                 currentForm.setEvent(eventSpinner.getSelectedItem().toString());
 
-                Toast.makeText(getApplicationContext(),
-                        currentForm.getName(),
-                        Toast.LENGTH_SHORT).show();
+                sentToServer(currentForm);
             }
         });
 
+    }
+
+    void sentToServer(Form currentForm){
+        Intent intent = new Intent(MainActivity.this, FakeServer.class);
+        intent.putExtra("sendForm", (Serializable) currentForm);
+        startService(intent);
     }
 }

@@ -2,13 +2,15 @@ package com.example.challengekk;
 
 import android.widget.EditText;
 
-public class Form {
+import java.io.Serializable;
+
+public class Form implements Serializable {
     private String name;
     private String division;
     private String event;
     private String theme;
     private String content;
-    
+
     public String getName() {
         return name;
     }

@@ -3,6 +3,13 @@ package com.example.challengekk;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.os.Handler;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -12,6 +19,9 @@ import android.content.Context;
  * helper methods.
  */
 public class FakeServer extends IntentService {
+    public String message;
+    Map<String, Form> allForms = new HashMap<>();
+
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_FOO = "com.example.challengekk.action.FOO";
@@ -55,19 +65,37 @@ public class FakeServer extends IntentService {
         context.startService(intent);
     }
 
+    private Handler mHandler;
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mHandler = new Handler();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            final String action = intent.getAction();
-            if (ACTION_FOO.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                handleActionFoo(param1, param2);
-            } else if (ACTION_BAZ.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                handleActionBaz(param1, param2);
+
+            Form form = (Form) intent.getSerializableExtra("sendForm");
+            String themeForm = form.getTheme();
+
+            if(allForms.containsKey(themeForm)){
+                //Отрпавить в активность сообщение о том, то событие с такой темой уже существует
+                message ="Событие с такой темой уже существует";
+            } else {
+                allForms.put(themeForm, form);
+                //Отправить сообщение о том, что событие добавлено в список
+                message ="Событие добавлено в список";
             }
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), message,
+                            Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
