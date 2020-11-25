@@ -33,8 +33,11 @@
     <Spinner
         android:id="@+id/events_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@arrays/eventsList" />
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:entries="@array/eventsList"
+        android:spinnerMode="dialog" />
 
     <EditText
         android:id="@+id/theme_editText"

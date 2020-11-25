@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-attay name="eventsList">
+    <string-array name="eventsList">
         <item>@string/event1</item>
         <item>@string/event2</item>
         <item>@string/event3</item>
         <item>@string/event4</item>
         <item>@string/event5</item>
-    </string-attay>
+    </string-array>
 </resources>
