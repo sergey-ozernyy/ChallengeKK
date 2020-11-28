@@ -78,24 +78,41 @@ public class FakeServer extends IntentService {
         if (intent != null) {
 
             Form form = (Form) intent.getSerializableExtra("sendForm");
-            String themeForm = form.getTheme();
+            if(form != null){
+                String themeForm = form.
+                        getTheme();
+                if(allForms.containsKey(themeForm)){
+                    //Отрпавить в активность сообщение о том, то событие с такой темой уже существует
+                    message ="Событие с такой темой уже существует";
+                } else {
+                    allForms.put(themeForm, form);
+                    //Отправить сообщение о том, что событие добавлено в список
+                    message ="Событие добавлено в список";
+                }
 
-            if(allForms.containsKey(themeForm)){
-                //Отрпавить в активность сообщение о том, то событие с такой темой уже существует
-                message ="Событие с такой темой уже существует";
-            } else {
-                allForms.put(themeForm, form);
-                //Отправить сообщение о том, что событие добавлено в список
-                message ="Событие добавлено в список";
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), message,
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), message,
-                            Toast.LENGTH_LONG).show();
+            String searchTheme = intent.getStringExtra("request");
+            if (searchTheme != null){
+                ArrayList<String> resultSearch = new ArrayList<String>();
+                for (String key : allForms.keySet()){
+                    if (searchTheme.contains(key)){
+                        resultSearch.add(key);
+                    }
                 }
-            });
+                Intent updateSearchResult = new Intent();
+                updateSearchResult.setAction("updateSearchResult");
+                updateSearchResult.addCategory(Intent.CATEGORY_DEFAULT);
+                updateSearchResult.putStringArrayListExtra("resultSearch", resultSearch);
+                sendBroadcast(updateSearchResult);
+            }
         }
     }
 

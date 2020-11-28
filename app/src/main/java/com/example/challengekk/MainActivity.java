@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AutoCompleteTextView searchAutoCompleteText = (AutoCompleteTextView) findViewById(R.id.search_autoCompleteTextView);
+        
 
 
         final EditText nameEditText = (EditText) findViewById(R.id.name_editText);
@@ -49,13 +53,13 @@ public class MainActivity extends AppCompatActivity {
                 currentForm.setContent(contentEditText.getText().toString());
                 currentForm.setEvent(eventSpinner.getSelectedItem().toString());
 
-                sentToServer(currentForm);
+                sendToServer(currentForm);
             }
         });
 
     }
 
-    void sentToServer(Form currentForm){
+    void sendToServer(Form currentForm){
         Intent intent = new Intent(MainActivity.this, FakeServer.class);
         intent.putExtra("sendForm", (Serializable) currentForm);
         startService(intent);
