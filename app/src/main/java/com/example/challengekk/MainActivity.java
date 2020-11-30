@@ -3,10 +3,13 @@ package com.example.challengekk;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -21,6 +24,30 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private FakeServer fakeServer;
+    private boolean bound = false;
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            FakeServer.FakeServerBinder fakeServerBinder = (FakeServer.FakeServerBinder) service;
+            fakeServer = fakeServerBinder.getFakeServer();
+            fakeServer.setOnSaveListener(new FakeServer.OnSaveListener(){
+                @Override
+                public void onSave(String massage){
+                    Toast.makeText(getApplicationContext(), massage,
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+            bound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            bound = false;
+        }
+    };
+
     public ArrayList<String> variablesAutocomplete;
     private ArrayAdapter<String> autocompleteAdapter;
     BroadcastReceiver mUpdateSearchBroadcastReceiver;
@@ -30,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Подключаемся к сервису
+        Intent intent = new Intent(this, FakeServer.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+        final ArrayList<String> test = new ArrayList<String>();
+        test.add("Вариант1");
+        test.add("Вариант2");
+        test.add("Вариант3");
 
         final AutoCompleteTextView searchAutoCompleteText = (AutoCompleteTextView) findViewById(R.id.search_autoCompleteTextView);
         searchAutoCompleteText.addTextChangedListener(new TextWatcher() {
@@ -45,43 +81,22 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (searchAutoCompleteText.getText().toString().length() >= 3){
-                    Intent searchRequest = new Intent(MainActivity.this, FakeServer.class);
-                    searchRequest.putExtra("request", searchAutoCompleteText.getText().toString());
-                    startService(searchRequest);
+                String request = searchAutoCompleteText.getText().toString();
+                if(!request.equals("")) {
+                    variablesAutocomplete = fakeServer.getVariantsSearch(request);
+
                 }
+                //Адаптер для связывания поля автодополнения и вариантов для него
+                autocompleteAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, variablesAutocomplete);
+                searchAutoCompleteText.setAdapter(autocompleteAdapter);
             }
         });
 
-        //Приемник для варинатов поиска
-        class UpdateSearchBroadcastReceiver extends BroadcastReceiver {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                variablesAutocomplete = intent.getStringArrayListExtra("resultSearch");
-            }
-        }
 
-        mUpdateSearchBroadcastReceiver = new UpdateSearchBroadcastReceiver();
-        IntentFilter updateIntentFilter = new IntentFilter(FakeServer.ACTION_UPDATE_SEARCH);
-        updateIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(mUpdateSearchBroadcastReceiver, updateIntentFilter);
 
-        //Адаптер для связывания поля автодополнения и вариантов для него
-        autocompleteAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, variablesAutocomplete);
-        searchAutoCompleteText.setAdapter(autocompleteAdapter);
 
-        //Приемник для события записи формы
-        class SendEventBroadcastReceiver extends BroadcastReceiver {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Toast.makeText(getApplicationContext(), intent.getStringExtra("sendEvent"), Toast.LENGTH_LONG).show();
-            }
-        }
 
-        mSendEventBroadcastReceiver = new SendEventBroadcastReceiver();
-        IntentFilter sendIntentFilter = new IntentFilter(FakeServer.ACTION_UPDATE_SEND);
-        sendIntentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(mSendEventBroadcastReceiver, sendIntentFilter);
+
 
 
         final EditText nameEditText = (EditText) findViewById(R.id.name_editText);
@@ -102,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
         Button sendButton = (Button) findViewById(R.id.send_button);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,21 +130,21 @@ public class MainActivity extends AppCompatActivity {
                 currentForm.setContent(contentEditText.getText().toString());
                 currentForm.setEvent(eventSpinner.getSelectedItem().toString());
 
-                sendToServer(currentForm);
+                fakeServer.saveForm(currentForm);
             }
         });
 
     }
 
-    void sendToServer(Form currentForm){
-        Intent intent = new Intent(MainActivity.this, FakeServer.class);
-        intent.putExtra("sendForm", (Serializable) currentForm);
-        startService(intent);
-    }
+
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
+        if (bound){
+            unbindService(connection);
+            bound = false;
+        }
         unregisterReceiver(mUpdateSearchBroadcastReceiver);
         unregisterReceiver(mSendEventBroadcastReceiver);
     }
