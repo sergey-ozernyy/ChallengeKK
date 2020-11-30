@@ -15,22 +15,23 @@ import java.util.Map;
 public class FakeServer extends Service {
     private final IBinder binder = new FakeServerBinder();
 
-    public void setOnSaveListener(OnSaveListener onSaveListener) {
-        this.onSaveListener = onSaveListener;
-    }
-
     public class FakeServerBinder extends Binder {
+
         FakeServer getFakeServer() {
             return FakeServer.this;
         }
     }
-
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
     }
 
     Map<String, Form> allForms = new HashMap<>();
+
+    public void setOnSaveListener(OnSaveListener onSaveListener) {
+        this.onSaveListener = onSaveListener;
+    }
+
     String massage = "Test!";
 
     interface OnSaveListener{
@@ -73,9 +74,19 @@ public class FakeServer extends Service {
         thread.start();
     }
 
+    public void setOnGetVariantsListener(OnGetVariantsListener onGetVariantsListener){
+        this.onGetVariantsListener = onGetVariantsListener;
+    }
+
     ArrayList<String> resultSearch;
 
-    public ArrayList<String> getVariantsSearch(final String searchTheme) {
+    interface OnGetVariantsListener{
+        void onGetVariants(ArrayList<String> variants);
+    }
+
+    private OnGetVariantsListener onGetVariantsListener;
+
+    public void getVariantsSearch(final String searchTheme) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -85,11 +96,18 @@ public class FakeServer extends Service {
                         resultSearch.add(key);
                     }
                 }
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(onGetVariantsListener != null){
+                            onGetVariantsListener.onGetVariants(resultSearch);
+                        }
+                    }
+                });
             }
         };
         Thread thread = new Thread(runnable);
         thread.start();
-        return resultSearch;
     }
 
 

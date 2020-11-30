@@ -26,6 +26,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private FakeServer fakeServer;
     private boolean bound = false;
+    public ArrayList<String> variablesAutocomplete;
+    private ArrayAdapter<String> autocompleteAdapter;
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -39,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 }
             });
+            fakeServer.setOnGetVariantsListener(new FakeServer.OnGetVariantsListener() {
+                @Override
+                public void onGetVariants(ArrayList<String> variants) {
+                    variablesAutocomplete = variants;
+                }
+            });
             bound = true;
         }
 
@@ -48,10 +56,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public ArrayList<String> variablesAutocomplete;
-    private ArrayAdapter<String> autocompleteAdapter;
-    BroadcastReceiver mUpdateSearchBroadcastReceiver;
-    BroadcastReceiver mSendEventBroadcastReceiver;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,16 +88,13 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 String request = searchAutoCompleteText.getText().toString();
                 if(!request.equals("")) {
-                    variablesAutocomplete = fakeServer.getVariantsSearch(request);
-
+                    fakeServer.getVariantsSearch(request);
                 }
                 //Адаптер для связывания поля автодополнения и вариантов для него
-                autocompleteAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, variablesAutocomplete);
+                autocompleteAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, test);
                 searchAutoCompleteText.setAdapter(autocompleteAdapter);
             }
         });
-
-
 
 
 
@@ -145,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
             unbindService(connection);
             bound = false;
         }
-        unregisterReceiver(mUpdateSearchBroadcastReceiver);
-        unregisterReceiver(mSendEventBroadcastReceiver);
+
     }
 }
