@@ -1,6 +1,7 @@
 package com.example.challengekk;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -14,11 +15,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Serializable;
@@ -64,10 +67,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, FakeServer.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
-        final ArrayList<String> test = new ArrayList<String>();
-        test.add("Вариант1");
-        test.add("Вариант2");
-        test.add("Вариант3");
 
         final AutoCompleteTextView searchAutoCompleteText = (AutoCompleteTextView) findViewById(R.id.search_autoCompleteTextView);
         searchAutoCompleteText.addTextChangedListener(new TextWatcher() {
@@ -92,12 +91,38 @@ public class MainActivity extends AppCompatActivity {
                         variablesAutocomplete = variants;
 
                         //Адаптер для связывания поля автодополнения и вариантов для него
-                        autocompleteAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, variablesAutocomplete);
+                        autocompleteAdapter = new ArrayAdapter<>(MainActivity.this,
+                                android.R.layout.simple_list_item_1, variablesAutocomplete);
                         searchAutoCompleteText.setAdapter(autocompleteAdapter);
 
                     }
                 });
 
+            }
+        });
+
+        searchAutoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String theme = searchAutoCompleteText.getText().toString();
+                fakeServer.getExistingForm(theme);
+                fakeServer.setOnGetExistingFormListener(new FakeServer.OnGetExistingFormListener() {
+                    @Override
+                    public void onGetForm(Form form) {
+                        String themeForm = form.getTheme();
+                        TextView themeFragment = (TextView) findViewById(R.id.themeFragmentTextView);
+                        themeFragment.setText(themeForm);
+
+                        String eventForm = form.getEvent();
+                        TextView eventFragment = (TextView) findViewById(R.id.eventFragmentTextView);
+                        eventFragment.setText(eventForm);
+
+                        // вывод на экран диалогового окна с данными из формы
+                        FragmentManager manager = getSupportFragmentManager();
+                        ExistingFormFragment existingFormFragment = new ExistingFormFragment();
+                        existingFormFragment.show(manager, "existingForm");
+                    }
+                });
             }
         });
 

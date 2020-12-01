@@ -113,6 +113,35 @@ public class FakeServer extends Service {
         thread.start();
     }
 
+    public void setOnGetExistingFormListener(OnGetExistingFormListener onGetExistingFormListener){
+        this.onGetExistingFormListener = onGetExistingFormListener;
+    }
+
+    interface OnGetExistingFormListener{
+        void onGetForm(Form form);
+    }
+
+    private OnGetExistingFormListener onGetExistingFormListener;
+
+    public void getExistingForm(final String theme) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                final Form existingForm = allForms.get(theme);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(onGetExistingFormListener != null){
+                            onGetExistingFormListener.onGetForm(existingForm);
+                        }
+                    }
+                });
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
+
 
 }
 
