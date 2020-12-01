@@ -41,12 +41,7 @@ public class MainActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 }
             });
-            fakeServer.setOnGetVariantsListener(new FakeServer.OnGetVariantsListener() {
-                @Override
-                public void onGetVariants(ArrayList<String> variants) {
-                    variablesAutocomplete = variants;
-                }
-            });
+
             bound = true;
         }
 
@@ -87,11 +82,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String request = searchAutoCompleteText.getText().toString();
-                if(!request.equals("")) {
-                    fakeServer.getVariantsSearch(request);
-                }
+                fakeServer.getVariantsSearch(request);
+
+                fakeServer.setOnGetVariantsListener(new FakeServer.OnGetVariantsListener() {
+                    @Override
+                    public void onGetVariants(ArrayList<String> variants) {
+                        variablesAutocomplete = variants;
+
+                    }
+                });
                 //Адаптер для связывания поля автодополнения и вариантов для него
-                autocompleteAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, test);
+                autocompleteAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, variablesAutocomplete);
                 searchAutoCompleteText.setAdapter(autocompleteAdapter);
             }
         });
