@@ -6,6 +6,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 
 public class FakeServer extends Service {
+    private static final String TAG = "myLogs";
     private final IBinder binder = new FakeServerBinder();
 
     public class FakeServerBinder extends Binder {
@@ -65,7 +67,8 @@ public class FakeServer extends Service {
                     public void run() {
                         if(onSaveListener != null) {
                         onSaveListener.onSave(massage);
-                    }}
+                        }
+                    }
                 });
 
             }
@@ -92,7 +95,7 @@ public class FakeServer extends Service {
             public void run() {
                 resultSearch = new ArrayList<String>();
                 for (String key : allForms.keySet()) {
-                    if (searchTheme.contains(key)) {
+                    if (key.contains(searchTheme)) {
                         resultSearch.add(key);
                     }
                 }

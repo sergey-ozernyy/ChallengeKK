@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean bound = false;
     public ArrayList<String> variablesAutocomplete;
     private ArrayAdapter<String> autocompleteAdapter;
+    private static final String TAG = "myLogs";
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -89,11 +91,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onGetVariants(ArrayList<String> variants) {
                         variablesAutocomplete = variants;
 
+                        //Адаптер для связывания поля автодополнения и вариантов для него
+                        autocompleteAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, variablesAutocomplete);
+                        searchAutoCompleteText.setAdapter(autocompleteAdapter);
+
                     }
                 });
-                //Адаптер для связывания поля автодополнения и вариантов для него
-                autocompleteAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, variablesAutocomplete);
-                searchAutoCompleteText.setAdapter(autocompleteAdapter);
+
             }
         });
 
