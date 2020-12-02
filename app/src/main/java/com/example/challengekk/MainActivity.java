@@ -147,18 +147,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        Button sendButton = (Button) findViewById(R.id.send_button);
+        final Button sendButton = (Button) findViewById(R.id.send_button);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Form currentForm = new Form();
-                currentForm.setName(nameEditText.getText().toString());
-                currentForm.setDivision(divisionEditText.getText().toString());
-                currentForm.setTheme(themeEditText.getText().toString());
-                currentForm.setContent(contentEditText.getText().toString());
-                currentForm.setEvent(eventSpinner.getSelectedItem().toString());
+                boolean themeIsEmpty = emptyCheck(themeEditText);
+                boolean nameIsEmpty = emptyCheck(nameEditText);
+                boolean divisionIsEmpty = emptyCheck(divisionEditText);
+                boolean contentIsEmpty = emptyCheck(contentEditText);
 
-                fakeServer.saveForm(currentForm);
+                if(themeIsEmpty && nameIsEmpty && divisionIsEmpty && contentIsEmpty){
+                    Toast.makeText(getApplicationContext(), "Все поля должны быть заполнены", Toast.LENGTH_LONG).show();
+                } else {
+                    Form currentForm = new Form();
+                    currentForm.setName(nameEditText.getText().toString());
+                    currentForm.setDivision(divisionEditText.getText().toString());
+                    currentForm.setTheme(themeEditText.getText().toString());
+                    currentForm.setContent(contentEditText.getText().toString());
+                    currentForm.setEvent(eventSpinner.getSelectedItem().toString());
+
+                    fakeServer.saveForm(currentForm);
+                }
             }
         });
 
@@ -174,4 +183,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    boolean emptyCheck(EditText editText){
+        boolean isEmpty = (editText.getText().length() == 0);
+        if(isEmpty){
+            editText.setError("Поле не может быть пустым");
+        } else {
+            editText.setError(null);
+        }
+        return isEmpty;
+    }
+
 }
+

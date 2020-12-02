@@ -54,11 +54,11 @@ public class FakeServer extends Service {
                 String themeForm = newForm.getTheme();
                 if (allForms.containsKey(themeForm)) {
                     //Отрпавить в активность сообщение о том, то событие с такой темой уже существует
-                    massage = "Событие с такой темой уже существует " + themeForm;
+                    massage = "Событие с темой " + themeForm + " уже существует";
                 } else {
                     allForms.put(themeForm, newForm);
                     //Отправить сообщение о том, что событие добавлено в список
-                    massage = "Событие добавлено в список " + themeForm;
+                    massage = "Добавлено событие с темой " + themeForm;
                 }
 
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
