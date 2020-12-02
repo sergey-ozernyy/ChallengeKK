@@ -1,19 +1,13 @@
 package com.example.challengekk;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,10 +15,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Serializable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -110,16 +105,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onGetForm(Form form) {
                         String themeForm = form.getTheme();
-                        TextView themeFragment = (TextView) findViewById(R.id.themeFragmentTextView);
-                        themeFragment.setText(themeForm);
-
                         String eventForm = form.getEvent();
-                        TextView eventFragment = (TextView) findViewById(R.id.eventFragmentTextView);
-                        eventFragment.setText(eventForm);
 
                         // вывод на экран диалогового окна с данными из формы
                         FragmentManager manager = getSupportFragmentManager();
                         ExistingFormFragment existingFormFragment = new ExistingFormFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putString("theme", themeForm);
+                        bundle.putString("event", eventForm);
+                        existingFormFragment.setArguments(bundle);
+
                         existingFormFragment.show(manager, "existingForm");
                     }
                 });

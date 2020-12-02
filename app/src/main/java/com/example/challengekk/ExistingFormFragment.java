@@ -2,10 +2,10 @@ package com.example.challengekk;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
@@ -14,18 +14,21 @@ public class ExistingFormFragment extends AppCompatDialogFragment {
     @Nullable
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_existing_form, null);
+
+        Bundle bundle = getArguments();
+        String theme = bundle.getString("theme");
+        String event = bundle.getString("event");
+
+        TextView themeFragment = (TextView) view.findViewById(R.id.themeFragmentTextView);
+        TextView eventFragment = (TextView) view.findViewById(R.id.eventFragmentTextView);
+        themeFragment.setText(theme);
+        eventFragment.setText(event);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
-//        builder.setTitle("Событие с такой темой уже существует")
-//                .setMessage("Тут должна быть подробная инфа о событии")
-//                .setPositiveButton("ОК", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                        // Закрываем окно
-//                        dialog.cancel();
-//                    }
-//                });
+//
         return builder.create();
     }
 }
