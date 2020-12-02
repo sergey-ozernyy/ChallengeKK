@@ -34,9 +34,9 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             FakeServer.FakeServerBinder fakeServerBinder = (FakeServer.FakeServerBinder) service;
             fakeServer = fakeServerBinder.getFakeServer();
-            fakeServer.setOnSaveListener(new FakeServer.OnSaveListener(){
+            fakeServer.setOnSaveListener(new FakeServer.OnSaveListener() {
                 @Override
-                public void onSave(String massage){
+                public void onSave(String massage) {
                     Toast.makeText(getApplicationContext(), massage,
                             Toast.LENGTH_LONG).show();
                 }
@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
             bound = false;
         }
     };
-
 
 
     @Override
@@ -106,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onGetForm(Form form) {
                         String themeForm = form.getTheme();
                         String eventForm = form.getEvent();
+                        String nameForm = form.getName();
+                        String divisionForm = form.getDivision();
+                        String contentForm = form.getContent();
 
                         // вывод на экран диалогового окна с данными из формы
                         FragmentManager manager = getSupportFragmentManager();
@@ -114,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
                         Bundle bundle = new Bundle();
                         bundle.putString("theme", themeForm);
                         bundle.putString("event", eventForm);
+                        bundle.putString("name", nameForm);
+                        bundle.putString("division", divisionForm);
+                        bundle.putString("content", contentForm);
                         existingFormFragment.setArguments(bundle);
 
                         existingFormFragment.show(manager, "existingForm");
@@ -121,10 +126,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
-
-
-
-
 
 
         final EditText nameEditText = (EditText) findViewById(R.id.name_editText);
@@ -146,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
         Button sendButton = (Button) findViewById(R.id.send_button);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,11 +165,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
-        if (bound){
+        if (bound) {
             unbindService(connection);
             bound = false;
         }

@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
+        android:completionThreshold="3"
         android:hint="Поиск по темам" />
 
     <EditText
@@ -20,7 +21,9 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Введите ФИО"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:textColorHighlight="#009688"
+        android:textColorLink="#009688" />
 
     <EditText
         android:id="@+id/division_editText"
@@ -28,7 +31,9 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Введите ваше подразделение"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:textColorHighlight="#009688"
+        android:textColorLink="#009688" />
 
     <Spinner
         android:id="@+id/events_spinner"
@@ -45,16 +50,20 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Тема"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:textColorHighlight="#009688"
+        android:textColorLink="#009688" />
 
     <EditText
         android:id="@+id/content_editText"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:ems="10"
         android:gravity="start|top"
         android:hint="Содержание"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine"
+        android:textColorHighlight="#009688"
+        android:textColorLink="#009688" />
 
     <LinearLayout
         android:layout_width="match_parent"

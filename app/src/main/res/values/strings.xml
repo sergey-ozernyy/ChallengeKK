@@ -10,5 +10,6 @@
     <string name="events">События</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="titleFragment">Событие с такой темой уже существует</string>
 
 </resources>
