@@ -1,7 +1,5 @@
 package com.example.challengekk;
 
-import android.widget.EditText;
-
 import java.io.Serializable;
 
 public class Form implements Serializable {

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="@string/titleFragment"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/captionTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:paddingStart="16dp"
+        android:paddingBottom="16dp"
+        android:text="Тема: "
+        app:layout_constraintBottom_toTopOf="@id/eventFragmentTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <TextView
+        android:id="@+id/themeFragmentTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:paddingBottom="16dp"
+        android:text="Theme"
+        app:layout_constraintBottom_toTopOf="@+id/eventFragmentTextView"
+        app:layout_constraintStart_toEndOf="@+id/captionTheme"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <TextView
+        android:id="@+id/captionEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingBottom="16dp"
+        android:text="Событие: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/captionTheme" />
+
+    <TextView
+        android:id="@+id/eventFragmentTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:gravity="left"
+        android:text="Event"
+        app:layout_constraintStart_toEndOf="@+id/captionEvent"
+        app:layout_constraintTop_toBottomOf="@id/themeFragmentTextView" />
+
+    <TextView
+        android:id="@+id/captionName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingBottom="16dp"
+        android:text="ФИО: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/captionEvent" />
+
+    <TextView
+        android:id="@+id/nameFragmentTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:paddingBottom="16dp"
+        android:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/captionName"
+        app:layout_constraintTop_toBottomOf="@id/eventFragmentTextView" />
+
+    <TextView
+        android:id="@+id/captionDivision"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingBottom="16dp"
+        android:text="Подразделение: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/captionName" />
+
+    <TextView
+        android:id="@+id/divisionFragmentTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:paddingBottom="16dp"
+        android:text="Division"
+        app:layout_constraintStart_toEndOf="@+id/captionDivision"
+        app:layout_constraintTop_toBottomOf="@id/nameFragmentTextView" />
+
+    <TextView
+        android:id="@+id/captionContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingBottom="16dp"
+        android:text="Содержимое: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/captionDivision" />
+
+    <TextView
+        android:id="@+id/contentFragmentTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+
+        android:paddingBottom="16dp"
+        android:text="Content"
+        app:layout_constraintStart_toEndOf="@+id/captionContent"
+        app:layout_constraintTop_toBottomOf="@id/divisionFragmentTextView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

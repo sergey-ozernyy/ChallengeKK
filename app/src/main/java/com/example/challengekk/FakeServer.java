@@ -1,136 +1,147 @@
 package com.example.challengekk;
 
-import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
-import android.content.Context;
+import android.os.Binder;
 import android.os.Handler;
-import android.widget.Toast;
+import android.os.IBinder;
+import android.os.Looper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
- */
-public class FakeServer extends IntentService {
-    public String message;
+
+public class FakeServer extends Service {
+    private static final String TAG = "myLogs";
+    private final IBinder binder = new FakeServerBinder();
+
+    public class FakeServerBinder extends Binder {
+
+        FakeServer getFakeServer() {
+            return FakeServer.this;
+        }
+    }
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
     Map<String, Form> allForms = new HashMap<>();
 
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static final String ACTION_FOO = "com.example.challengekk.action.FOO";
-    private static final String ACTION_BAZ = "com.example.challengekk.action.BAZ";
-
-    // TODO: Rename parameters
-    private static final String EXTRA_PARAM1 = "com.example.challengekk.extra.PARAM1";
-    private static final String EXTRA_PARAM2 = "com.example.challengekk.extra.PARAM2";
-
-    public FakeServer() {
-        super("FakeServer");
+    public void setOnSaveListener(OnSaveListener onSaveListener) {
+        this.onSaveListener = onSaveListener;
     }
 
-    /**
-     * Starts this service to perform action Foo with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
-    public static void startActionFoo(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, FakeServer.class);
-        intent.setAction(ACTION_FOO);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
+    String massage = "Test!";
+
+    interface OnSaveListener{
+        void onSave(String massage);
     }
 
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
-    public static void startActionBaz(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, FakeServer.class);
-        intent.setAction(ACTION_BAZ);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
-    }
+    private OnSaveListener onSaveListener;
 
-    private Handler mHandler;
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        mHandler = new Handler();
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-
-            Form form = (Form) intent.getSerializableExtra("sendForm");
-            if(form != null){
-                String themeForm = form.
-                        getTheme();
-                if(allForms.containsKey(themeForm)){
-                    //Отрпавить в активность сообщение о том, то событие с такой темой уже существует
-                    message ="Событие с такой темой уже существует";
-                } else {
-                    allForms.put(themeForm, form);
-                    //Отправить сообщение о том, что событие добавлено в список
-                    message ="Событие добавлено в список";
+    public void saveForm(final Form newForm) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
-                mHandler.post(new Runnable() {
+                String themeForm = newForm.getTheme();
+                if (allForms.containsKey(themeForm)) {
+                    //Отрпавить в активность сообщение о том, то событие с такой темой уже существует
+                    massage = "Событие с темой " + themeForm + " уже существует";
+                } else {
+                    allForms.put(themeForm, newForm);
+                    //Отправить сообщение о том, что событие добавлено в список
+                    massage = "Добавлено событие с темой " + themeForm;
+                }
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), message,
-                                Toast.LENGTH_LONG).show();
+                        if(onSaveListener != null) {
+                        onSaveListener.onSave(massage);
+                        }
                     }
                 });
-            }
 
-            String searchTheme = intent.getStringExtra("request");
-            if (searchTheme != null){
-                ArrayList<String> resultSearch = new ArrayList<String>();
-                for (String key : allForms.keySet()){
-                    if (searchTheme.contains(key)){
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
+
+    public void setOnGetVariantsListener(OnGetVariantsListener onGetVariantsListener){
+        this.onGetVariantsListener = onGetVariantsListener;
+    }
+
+    ArrayList<String> resultSearch;
+
+    interface OnGetVariantsListener{
+        void onGetVariants(ArrayList<String> variants);
+    }
+
+    private OnGetVariantsListener onGetVariantsListener;
+
+    public void getVariantsSearch(final String searchTheme) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                resultSearch = new ArrayList<String>();
+                for (String key : allForms.keySet()) {
+                    if (key.contains(searchTheme)) {
                         resultSearch.add(key);
                     }
                 }
-                Intent updateSearchResult = new Intent();
-                updateSearchResult.setAction("updateSearchResult");
-                updateSearchResult.addCategory(Intent.CATEGORY_DEFAULT);
-                updateSearchResult.putStringArrayListExtra("resultSearch", resultSearch);
-                sendBroadcast(updateSearchResult);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(onGetVariantsListener != null){
+                            onGetVariantsListener.onGetVariants(resultSearch);
+                        }
+                    }
+                });
             }
-        }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
     }
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionFoo(String param1, String param2) {
-        // TODO: Handle action Foo
-        throw new UnsupportedOperationException("Not yet implemented");
+    public void setOnGetExistingFormListener(OnGetExistingFormListener onGetExistingFormListener){
+        this.onGetExistingFormListener = onGetExistingFormListener;
     }
 
-    /**
-     * Handle action Baz in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionBaz(String param1, String param2) {
-        // TODO: Handle action Baz
-        throw new UnsupportedOperationException("Not yet implemented");
+    interface OnGetExistingFormListener{
+        void onGetForm(Form form);
     }
+
+    private OnGetExistingFormListener onGetExistingFormListener;
+
+    public void getExistingForm(final String theme) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                final Form existingForm = allForms.get(theme);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(onGetExistingFormListener != null){
+                            onGetExistingFormListener.onGetForm(existingForm);
+                        }
+                    }
+                });
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
+
+
 }
+
+
