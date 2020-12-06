@@ -20,6 +20,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -88,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                         autocompleteAdapter = new ArrayAdapter<>(MainActivity.this,
                                 android.R.layout.simple_list_item_1, variablesAutocomplete);
                         searchAutoCompleteText.setAdapter(autocompleteAdapter);
-
                     }
                 });
 
@@ -128,20 +129,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        final EditText nameEditText = (EditText) findViewById(R.id.name_editText);
-        final EditText divisionEditText = (EditText) findViewById(R.id.division_editText);
-        final EditText themeEditText = (EditText) findViewById(R.id.theme_editText);
-        final EditText contentEditText = (EditText) findViewById(R.id.content_editText);
+        final TextInputLayout nameEditText = (TextInputLayout) findViewById(R.id.name_editText);
+        final TextInputLayout divisionEditText = (TextInputLayout) findViewById(R.id.division_editText);
+        final TextInputLayout themeEditText = (TextInputLayout) findViewById(R.id.theme_editText);
+        final TextInputLayout contentEditText = (TextInputLayout) findViewById(R.id.content_editText);
         final Spinner eventSpinner = (Spinner) findViewById(R.id.events_spinner);
+
 
         Button clearButton = (Button) findViewById(R.id.clear_button);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nameEditText.setText("");
-                divisionEditText.setText("");
-                themeEditText.setText("");
-                contentEditText.setText("");
+                nameEditText.getEditText().setText("");
+                divisionEditText.getEditText().setText("");
+                themeEditText.getEditText().setText("");
+                contentEditText.getEditText().setText("");
                 eventSpinner.setSelection(0);
             }
         });
@@ -151,19 +153,19 @@ public class MainActivity extends AppCompatActivity {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean themeIsEmpty = emptyCheck(themeEditText);
-                boolean nameIsEmpty = emptyCheck(nameEditText);
-                boolean divisionIsEmpty = emptyCheck(divisionEditText);
-                boolean contentIsEmpty = emptyCheck(contentEditText);
+                boolean themeIsEmpty = emptyCheck(themeEditText.getEditText());
+                boolean nameIsEmpty = emptyCheck(nameEditText.getEditText());
+                boolean divisionIsEmpty = emptyCheck(divisionEditText.getEditText());
+                boolean contentIsEmpty = emptyCheck(contentEditText.getEditText());
 
                 if(themeIsEmpty && nameIsEmpty && divisionIsEmpty && contentIsEmpty){
                     Toast.makeText(getApplicationContext(), "Все поля должны быть заполнены", Toast.LENGTH_LONG).show();
                 } else {
                     Form currentForm = new Form();
-                    currentForm.setName(nameEditText.getText().toString());
-                    currentForm.setDivision(divisionEditText.getText().toString());
-                    currentForm.setTheme(themeEditText.getText().toString());
-                    currentForm.setContent(contentEditText.getText().toString());
+                    currentForm.setName(nameEditText.getEditText().getText().toString());
+                    currentForm.setDivision(divisionEditText.getEditText().getText().toString());
+                    currentForm.setTheme(themeEditText.getEditText().getText().toString());
+                    currentForm.setContent(contentEditText.getEditText().getText().toString());
                     currentForm.setEvent(eventSpinner.getSelectedItem().toString());
 
                     fakeServer.saveForm(currentForm);

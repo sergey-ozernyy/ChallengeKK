@@ -44,12 +44,4 @@ public class ExistingFormFragment extends AppCompatDialogFragment {
         return builder.create();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-//        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
-//        params.width = WindowManager.LayoutParams.MATCH_PARENT;
-//        params.height = WindowManager.LayoutParams.MATCH_PARENT;
-//        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
-    }
 }
